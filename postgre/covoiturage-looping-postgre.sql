@@ -109,8 +109,9 @@ CREATE TABLE fuel_price(
 );
 
 CREATE TABLE general_conditions(
-   Id_general_conditions SERIAL,
-   PRIMARY KEY(Id_general_conditions)
+   id SERIAL,
+   "text" text not null,
+   PRIMARY KEY(id)
 );
 
 CREATE TABLE stagiaire(
@@ -188,4 +189,5 @@ CREATE TABLE car_fuel_type(
    FOREIGN KEY(id_1_1) REFERENCES car(id),
    FOREIGN KEY(id_id_fuel_price) REFERENCES fuel_price(id)
 );
+
 
