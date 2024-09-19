@@ -156,3 +156,36 @@ CREATE TABLE user_car(
    FOREIGN KEY(user_id) REFERENCES "user"(id),
    FOREIGN KEY(car_id) REFERENCES car(id)
 );
+
+CREATE TABLE car_path(
+   path_id INTEGER,
+   car_id INTEGER,
+   PRIMARY KEY(path_id, car_id),
+   FOREIGN KEY(path_id) REFERENCES path(id),
+   FOREIGN KEY(car_id) REFERENCES car(id)
+ );
+ 
+CREATE TABLE session_formation(
+   id INTEGER,
+   id_1 INTEGER,
+   PRIMARY KEY(id, id_1),
+   FOREIGN KEY(id) REFERENCES formation(id),
+   FOREIGN KEY(id_1) REFERENCES session(id)
+);
+
+CREATE TABLE notification_path(
+   path_id INTEGER,
+   notification_id INTEGER,
+   PRIMARY KEY(path_id, notification_id),
+   FOREIGN KEY(path_id) REFERENCES path(id),
+   FOREIGN KEY(notification_id) REFERENCES comment(id)
+);
+
+CREATE TABLE car_fuel_type(
+   id_1_1 INTEGER,
+   id_id_fuel_price INTEGER,
+   PRIMARY KEY(id_1_1, id_id_fuel_price),
+   FOREIGN KEY(id_1_1) REFERENCES car(id),
+   FOREIGN KEY(id_id_fuel_price) REFERENCES fuel_price(id)
+);
+
