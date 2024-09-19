@@ -1,67 +1,77 @@
-drop table if exists "user",staff, formation ;
-DROP TYPE if exists role, work, status;
+--drop table if exists "user",staff, formation ;
+--DROP TYPE if exists role, work, status;
 
 CREATE TABLE "user"(
-   id serial,
-   last_name VARCHAR(50) not NULL,
-   first_name VARCHAR(50) NOT NULL,
-   email VARCHAR(50) NOT NULL,
-   number VARCHAR(50) NOT NULL,
-   activated_account BOOLEAN not NULL default false ,
-   photo VARCHAR(250) ,
+   id SERIAL,
+   last_name VARCHAR(50) ,
+   first_name VARCHAR(50)  NOT NULL,
+   email VARCHAR(50)  NOT NULL,
+   "number" VARCHAR(50)  NOT NULL,
+   activated_account boolean not null default false NOT NULL,
+   photo boolean not null default false,
+   "message" boolean not null default false ,
+   email_1 boolean not null default false,
+   sms boolean not null default false,
    PRIMARY KEY(id)
 );
 
-CREATE TYPE role AS ENUM ('instructor','administration','external','other');
-CREATE TYPE work AS ENUM ('cdi','cdd','other');
+create type role as enum('instructor','administration','external','other');
+create type contract as enum('cdi','cdd','other');
 
 CREATE TABLE staff(
-   id INT,
+   id SERIAL,
    "function" role NOT NULL,
-   is_admin boolean NOT NULL DEFAULT false,
-   contract_type work NOT NULL,
+   is_admin boolean not null default false,
+   contract_type contract NOT NULL,
    start_date_contract DATE NOT NULL,
-   end_date_contract VARCHAR(50) NOT NULL,
-   user_id INT NOT NULL,
+   end_date_contract VARCHAR(50)  NOT NULL,
+   user_id INTEGER NOT NULL,
    PRIMARY KEY(id),
    UNIQUE(user_id),
    FOREIGN KEY(user_id) REFERENCES "user"(id)
 );
 
-CREATE TYPE status AS ENUM ('distancel','presentiel','hybrid');
 CREATE TABLE formation(
-   id serial,
-   formation_name VARCHAR(50) NOT NULL,
-   infos_formation VARCHAR(50) NOT NULL,
-   is_cdi boolean NOT null default false,
-   contract_type status NOT NULL,
+   id SERIAL,
+   formation_name VARCHAR(50)  NOT NULL,
+   infos_formation VARCHAR(50)  NOT NULL,
+   is_cdi boolean not null default false NOT NULL,
    PRIMARY KEY(id)
 );
 
----
-CREATE TYPE frequency AS ENUM ('punctual','regular');
+CREATE TABLE instructor(
+   id SERIAL,
+   staff_id INTEGER NOT NULL,
+   PRIMARY KEY(id),
+   UNIQUE(staff_id),
+   FOREIGN KEY(staff_id) REFERENCES staff(id)
+);
+
+create type frequency as enum('freqeunt','punctual');
+
 CREATE TABLE path(
    id SERIAL,
-   departure_date TIMESTAMP,
+   departure_date TIMESTAMP not null,
    start_adresse VARCHAR(50)  NOT NULL,
    end_adress VARCHAR(50)  NOT NULL,
    price MONEY NOT NULL,
-   path_frequency frequency,
-   description VARCHAR(50) ,
-   id_user_id INTEGER NOT NULL,
+   path_frequency frequency not null,
+   "description" VARCHAR(50),
+   user_id INTEGER NOT NULL,
    PRIMARY KEY(id),
-   FOREIGN KEY(id_user_id) REFERENCES "user"(id)
+   FOREIGN KEY(user_id) REFERENCES "user"(id)
 );
-CREATE TYPE category AS ENUM ('compact','suv','4X4','MonoSpace','utilitary_car');
-create type fuel as enum('essence','gazole','GPL','electric','hybrid');
+
+create type category as enum('compact','suv','4X4','MonoSpace','utilitary_car');
+create type fuel as enum('essence','gazole','GPL','electric');
 
 CREATE TABLE car(
    id SERIAL,
-   matricul_id VARCHAR(50) ,
-   car_category category,
+   matricul_id VARCHAR(50) not null ,
+   car_category category not null ,
    seat_quantity INTEGER NOT NULL,
-   brand_car VARCHAR(50) ,
-   fuel_type fuel NOT NULL,
+   brand_car VARCHAR(50) not Null,
+   fuel_type fuel not null ,
    fuel_consumption INTEGER NOT NULL,
    PRIMARY KEY(id)
 );
@@ -73,10 +83,34 @@ CREATE TABLE session(
    PRIMARY KEY(id)
 );
 
-CREATE TABLE notification(
-   id serial,
-   comments varchar(250) not null,
+CREATE TABLE comment(
+   id SERIAL,
+   comments VARCHAR(250) not null ,
+   user_id INTEGER NOT NULL,
+   user_id_1 INTEGER NOT NULL,
+   PRIMARY KEY(id),
+   FOREIGN KEY(user_id) REFERENCES "user"(id),
+   FOREIGN KEY(user_id_1) REFERENCES "user"(id)
+);
+
+CREATE TABLE notification_model(
+   id SERIAL,
+   "message" VARCHAR(50) ,
    PRIMARY KEY(id)
+);
+
+CREATE TABLE fuel_price(
+   id SERIAL,
+   essence__price MONEY,
+   gazole_price MONEY,
+   GPL_price MONEY,
+   electric_price VARCHAR(50) ,
+   PRIMARY KEY(id)
+);
+
+CREATE TABLE general_conditions(
+   Id_general_conditions SERIAL,
+   PRIMARY KEY(Id_general_conditions)
 );
 
 CREATE TABLE stagiaire(
@@ -86,70 +120,39 @@ CREATE TABLE stagiaire(
    PRIMARY KEY(id),
    UNIQUE(user_id),
    FOREIGN KEY(session_id) REFERENCES session(id),
-   FOREIGN KEY(user_id) REFERENCES _user_(id)
+   FOREIGN KEY(user_id) REFERENCES "user"(id)
 );
 
-CREATE TABLE dispens(
+CREATE TABLE notification(
+   Id_notification SERIAL,
+   id INTEGER NOT NULL,
+   user_id INTEGER NOT NULL,
+   PRIMARY KEY(Id_notification),
+   FOREIGN KEY(id) REFERENCES notification_model(id),
+   FOREIGN KEY(user_id) REFERENCES "user"(id)
+);
+
+CREATE TABLE instructor_session(
    instructor_id INTEGER,
    session_id INTEGER,
+   is_referent boolean NOT NULL default false,
    PRIMARY KEY(instructor_id, session_id),
    FOREIGN KEY(instructor_id) REFERENCES instructor(id),
    FOREIGN KEY(session_id) REFERENCES session(id)
 );
 
-CREATE TABLE booking(
-   id_user_id INTEGER,
-   id_path_id INTEGER,
-   PRIMARY KEY(id_user_id, id_path_id),
-   FOREIGN KEY(id_user_id) REFERENCES _user_(id),
-   FOREIGN KEY(id_path_id) REFERENCES path(id)
+CREATE TABLE user_path(
+   user_id INTEGER,
+   path_id INTEGER,
+   PRIMARY KEY(user_id, path_id),
+   FOREIGN KEY(user_id) REFERENCES "user"(id),
+   FOREIGN KEY(path_id) REFERENCES path(id)
 );
 
-CREATE TABLE has(
-   id_user_id INTEGER,
+CREATE TABLE user_car(
+   user_id INTEGER,
    car_id INTEGER,
-   PRIMARY KEY(id_user_id, car_id),
-   FOREIGN KEY(id_user_id) REFERENCES _user_(id),
+   PRIMARY KEY(user_id, car_id),
+   FOREIGN KEY(user_id) REFERENCES "user"(id),
    FOREIGN KEY(car_id) REFERENCES car(id)
 );
-
-CREATE TABLE makes(
-   path_id INTEGER,
-   car_id INTEGER,
-   PRIMARY KEY(path_id, car_id),
-   FOREIGN KEY(path_id) REFERENCES path(id),
-   FOREIGN KEY(car_id) REFERENCES car(id)
-);
-
-CREATE TABLE belongs_to(
-   id INTEGER,
-   id_1 INTEGER,
-   PRIMARY KEY(id, id_1),
-   FOREIGN KEY(id) REFERENCES formation(id),
-   FOREIGN KEY(id_1) REFERENCES session(id)
-);
-
-CREATE TABLE is_send(
-   path_id INTEGER,
-   notification_id INTEGER,
-   PRIMARY KEY(path_id, notification_id),
-   FOREIGN KEY(path_id) REFERENCES path(id),
-   FOREIGN KEY(notification_id) REFERENCES notification(id)
-);
-
-CREATE TABLE receives(
-   user_id INTEGER,
-   id_notification_id INTEGER,
-   PRIMARY KEY(user_id, id_notification_id),
-   FOREIGN KEY(user_id) REFERENCES _user_(id),
-   FOREIGN KEY(id_notification_id) REFERENCES notification(id)
-);
-
-CREATE TABLE send(
-   user_id INTEGER,
-   notification_id INTEGER,
-   PRIMARY KEY(user_id, notification_id),
-   FOREIGN KEY(user_id) REFERENCES _user_(id),
-   FOREIGN KEY(notification_id) REFERENCES notification(id)
-);
-

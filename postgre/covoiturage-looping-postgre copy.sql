@@ -3,19 +3,20 @@ CREATE TABLE "user"_(
    last_name VARCHAR(50) ,
    first_name VARCHAR(50)  NOT NULL,
    email VARCHAR(50)  NOT NULL,
-   number VARCHAR(50)  NOT NULL,
-   activated_account BOOLEAN NOT NULL,
-   photo BOOLEAN,
-   message BOOLEAN ,
-   email_1 BOOLEAN,
-   sms BOOLEAN,
+   "number" VARCHAR(50)  NOT NULL,
+   activated_account boolean not null default false NOT NULL,
+   photo boolean not null default false,
+   "message" boolean not null default false ,
+   email_1 boolean not null default false,
+   sms boolean not null default false,
    PRIMARY KEY(id)
 );
 
+CREATE type role as enum( )
 CREATE TABLE staff(
    id SERIAL,
-   _function_ role NOT NULL,
-   is_admin BOOLEAN,
+   "function" role NOT NULL,
+   is_admin boolean not null default false,
    contract_type type NOT NULL,
    start_date_contract DATE NOT NULL,
    end_date_contract VARCHAR(50)  NOT NULL,
@@ -29,7 +30,7 @@ CREATE TABLE formation(
    id SERIAL,
    formation_name VARCHAR(50)  NOT NULL,
    infos_formation VARCHAR(50)  NOT NULL,
-   is_cdi BOOLEAN NOT NULL,
+   is_cdi boolean not null default false NOT NULL,
    PRIMARY KEY(id)
 );
 
@@ -48,7 +49,7 @@ CREATE TABLE path(
    end_adress VARCHAR(50)  NOT NULL,
    price MONEY NOT NULL,
    path_frequency frequency,
-   description VARCHAR(50) ,
+   "description" VARCHAR(50) ,
    id"user"_id INTEGER NOT NULL,
    PRIMARY KEY(id),
    FOREIGN KEY(id"user"_id) REFERENCES "user"_(id)
@@ -84,7 +85,7 @@ CREATE TABLE comment(
 
 CREATE TABLE notification_model(
    id SERIAL,
-   message VARCHAR(50) ,
+   "message" VARCHAR(50) ,
    PRIMARY KEY(id)
 );
 
@@ -170,7 +171,7 @@ CREATE TABLE notification_path(
    FOREIGN KEY(notification_id) REFERENCES comment(id)
 );
 
-CREATE TABLE uses(
+CREATE TABLE car_fuel_type(
    id_1_1 INTEGER,
    id_id_fuel_price INTEGER,
    PRIMARY KEY(id_1_1, id_id_fuel_price),
