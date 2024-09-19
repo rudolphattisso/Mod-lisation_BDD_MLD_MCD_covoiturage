@@ -8,7 +8,7 @@ CREATE TABLE "user"(
    email VARCHAR(50)  NOT NULL,
    "number" VARCHAR(50)  NOT NULL,
    activated_account boolean not null default false NOT NULL,
-   photo boolean not null default false,
+   photo VARCHAR(250) not null,
    "message" boolean not null default false ,
    email_1 boolean not null default false,
    sms boolean not null default false,
@@ -191,3 +191,4 @@ CREATE TABLE car_fuel_type(
 );
 
 
+select from
